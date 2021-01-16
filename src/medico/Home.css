@@ -1,0 +1,112 @@
+.todo-perfil-medico {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.todo {
+    background-color: white;
+    width: 60%;
+    height: auto;
+    padding: 30px;
+    margin-top: 70px;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.topo {
+    width: 100% !important;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+
+.todo div img {
+    height: 100px;
+    width: 100px;
+    border-radius: 50px;
+}
+
+.bot form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.bot form input {
+    width: 250px;
+    height: 15px;
+    border: 1px solid rgb(184, 184, 184);
+    border-radius: 4px;
+    padding: 10px;
+    margin: 6px;
+}
+
+.bot form label {
+    width: 270px;
+    margin-top: 10px;
+}
+
+.bot form button {
+    padding: 10px;
+    width: 100px;
+    background-color: #E44E3F;
+    color: white;
+    border: none;
+    font-size: 17px;
+    border-radius: 4px;
+}
+
+.bot form button:disabled {
+    opacity: 0.7;
+}
+
+.none {
+    display: none;
+}
+
+.flex {
+    display: flex;
+}
+
+.loader {
+    border: 5px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 5px solid gray;
+    border-bottom: 5px solid gray;
+    width: 30px;
+    height: 30px;
+    margin: 10px;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@media screen and (max-width: 565px) {
+    .topo {
+        width: 100%;
+        display: flex;
+        flex-direction: column !important;
+    }
+}

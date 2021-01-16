@@ -1,0 +1,51 @@
+.register-container {
+    background-color: #395d7f;
+    width: 100%;
+    height: 650px;
+    max-width: 600px;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    color: white;
+    font-size: 20px;
+    position: relative;
+}
+
+.form-container-register {
+    height: 300px;
+    min-height: 60%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.form label {
+    width: 99%;
+    font-size: 15px;
+    margin-top: 10px;
+}
+
+.form small {
+    color: red;
+}
+
+.form div {
+    width: 96%;
+}
+
+.proximo {
+    float: right;
+}
+
+.anterior {
+    float: left;
+}
+
+.sel {
+    padding: 7px;
+    height: 38px !important;
+    border: none;
+}

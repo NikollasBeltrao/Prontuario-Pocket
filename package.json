@@ -2,6 +2,7 @@
   "name": "prontuario",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://192.168.100.89/build/",
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
@@ -9,11 +10,13 @@
     "@types/jest": "^26.0.15",
     "@types/node": "^12.0.0",
     "@types/react-dom": "^16.9.8",
+    "firebase": "^8.2.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-icons": "^4.1.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.1",
+    "react-select": "^3.1.1",
     "typescript": "^4.0.3",
     "web-vitals": "^0.2.4"
   },
@@ -43,6 +46,7 @@
   },
   "devDependencies": {
     "@types/react": "^16.14.2",
-    "@types/react-router-dom": "^5.1.7"
+    "@types/react-router-dom": "^5.1.7",
+    "@types/react-select": "^3.1.2"
   }
 }
