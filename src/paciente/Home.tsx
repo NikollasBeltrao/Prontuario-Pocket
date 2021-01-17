@@ -4,6 +4,7 @@ import auth from '../Service/auth';
 import firestore from '../Service/firestore';
 import { VscFilePdf } from 'react-icons/vsc';
 import './Home.css';
+import { useHistory } from 'react-router-dom';
 
 interface Props {
     user?: any,
@@ -12,7 +13,7 @@ interface Props {
 class Medico {
     nome?: any
     email?: any
-    constructor(nome: any, email: any) {
+    constructor(nome?: any, email?: any) {
         this.nome = nome;
         this.email = email;
     }
@@ -20,7 +21,9 @@ class Medico {
 interface Consulta { id: string, arquivos?: Array<string>, desc: string, titulo: string, data: string, medico: Medico }
 
 const HomePaciente: React.FC<Props> = (props) => {
+    const history = useHistory();
     let storage = localStorage.getItem('currentUser');
+
     const [user, setUser] = useState(JSON.parse(storage ? storage : '{}'));
     const [alterar, setAlterar] = useState(false);
     const [err, setErr] = useState('');
@@ -32,7 +35,6 @@ const HomePaciente: React.FC<Props> = (props) => {
         novaSenha: '',
         senha: ''
     });
-    console.log(props.page);
 
 
     /*let a = new FormData();
@@ -58,7 +60,6 @@ const HomePaciente: React.FC<Props> = (props) => {
                     data: el.data().data,
                     medico: el.data().medico
                 })
-                console.log(a);
             });
             setConsultas(a);
         }).catch(() => {
@@ -70,14 +71,27 @@ const HomePaciente: React.FC<Props> = (props) => {
         await firestore?.collection("Medico").doc(id).get().then(res => {
             let obj = new Medico(res.data()?.nome, res.data()?.email);
             let a: Array<Medico> = [obj];
-            setM([...a])
+            setM([...novoM, obj])            
         })
 
 
     }
 
+    async function validar() {
+        await firestore.collection("Paciente").doc(user.user.uid).get().then(res => {
+            if(!res.data()){
+                storage = null;
+                history.push('/')
+            }
+        }).catch(() => {storage = null; history.push('/')})
+    }
+
     useEffect(() => {
-        carregarConsultas();
+        if (storage) {            
+            validar();
+            carregarConsultas();
+            console.log(novoM);
+        }
     }, [])
 
 
@@ -101,6 +115,7 @@ const HomePaciente: React.FC<Props> = (props) => {
                 break;
         }
     }
+
     async function handlerAlterar(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
         if (novoUser.senha !== '') {
@@ -112,6 +127,9 @@ const HomePaciente: React.FC<Props> = (props) => {
                     let senha = novoUser.senha;
                     let u = await auth.currentUser;
                     if (novoUser.nome !== '') {
+                        await firestore.collection("Paciente").doc(user.user.id).set({
+                            nome: novoUser.nome
+                        })
                         await u?.updateProfile({
                             displayName: novoUser.nome,
                         }).then(function () {
@@ -122,6 +140,9 @@ const HomePaciente: React.FC<Props> = (props) => {
                         });
                     }
                     if (novoUser.email !== '') {
+                        await firestore.collection("Paciente").doc(user.user.id).set({
+                            email: novoUser.email
+                        })
                         await u?.updateEmail(novoUser.email).then(function () {
                             email = novoUser.email;
                             setErr("");
@@ -146,12 +167,6 @@ const HomePaciente: React.FC<Props> = (props) => {
                         .then(u => {
                             setUser(u);
                             if (err === '') {
-                                setNovoUser({
-                                    nome: '',
-                                    email: '',
-                                    novaSenha: '',
-                                    senha: ''
-                                });
                                 alert("Alterado com sucesso!");
                             }
 
@@ -176,83 +191,90 @@ const HomePaciente: React.FC<Props> = (props) => {
         }
 
     }
-    return (
-        <>
-            <Header tipo="paciente" user={user.user ? user.user : {}} />
-            {props.page === undefined ?
-                <div className="inicio">
-                    <ul>
-                        {
-                            consultas?.map((el, j) => {
-                                return (
-                                    <li key={el.id}>
-                                        <div className="medico"><h3>{novoM[j]?.nome}</h3>
-                                            <small>{novoM[j]?.email}</small></div>
-                                        <small>{el.data}</small>
-                                        <div className="arquivos">
-                                            {
-                                                el.arquivos?.map((res, i) => {
-                                                    return (
-                                                        <a key={el.id + (i)}
-                                                            href={res} type="application/pdf"
-                                                            target="_blank">
-                                                            <VscFilePdf className="pdficon" />
-                                                            <span>{res.split('/')[res.split('/').length - 1]}</span>
-                                                        </a>
-                                                    )
-                                                })
-                                            }
+    if (!storage) {
+        return <div>Erro{history.push('/')}</div>
+        
+    }
+    else {
+        return (
+            <>
+                <Header tipo="paciente" user={user.user ? user.user : {}} />
+                {props.page === undefined ?
+                    <div className="inicio">
+                        <ul>
+                            {
+                                consultas?.map((el, j) => {
+                                    return (
+                                        <li key={el.id}>
+                                            <div className="medico"><h3>{novoM[j]?.nome}</h3>
+                                                <small>{novoM[j]?.email}</small></div>
+                                            <small>{el.data}</small>
+                                            <div className="arquivos">
+                                                {
+                                                    el.arquivos?.map((res, i) => {
+                                                        return (
+                                                            <a key={el.id + (i)}
+                                                                href={res} type="application/pdf"
+                                                                target="_blank">
+                                                                <VscFilePdf className="pdficon" />
+                                                                <span>{res.split('/')[res.split('/').length - 1]}</span>
+                                                            </a>
+                                                        )
+                                                    })
+                                                }
 
-                                        </div>
-                                        <h4>{el.titulo}</h4>
-                                        <p>{el.desc} sfsfsfsf sdf sdf sdf sdfsdfsdfsfss </p>
-                                    </li>
-                                );
-                            })
-                        }
-                    </ul>
-                </div>
-                :
-                props.page === 'perfil' ?
-                    <div className="todo-perfil-medico">
-                        <div className="todo">
-                            <div className="topo">
-                                <div className="topo-div">
-                                    <img src={user.user.photoURL ? user.user.photoURL : 'https://www.icirnigeria.org/wp-content/uploads/2018/07/noavatar.png'}
-                                        alt="Não foi possivel carregar a imagem"
-                                        title="Perfil" />
-                                </div>
-                                <div className="topo-div">
-                                    <h3>{user.user ? user.user.displayName : 'undefined'}</h3>
-                                    <p>{user.user ? user.user.email : ''}</p>
-                                </div>
-
-                            </div>
-                            <div className="bot">
-                                <form onSubmit={handlerAlterar}>
-                                    <label htmlFor="nome">Nome</label>
-                                    <input id="nome" type="text" onChange={handlerChange} value={novoUser.nome ? novoUser.nome : ''} placeholder="Nome" />
-
-                                    <label htmlFor="email">Email</label>
-                                    <input id="email" type="email" onChange={handlerChange} value={novoUser.email ? novoUser.email : ''} placeholder="E-mail" />
-
-                                    <label htmlFor="novaSenha">Alterar senha</label>
-                                    <input id="novaSenha" type="password" onChange={handlerChange} value={novoUser.novaSenha} placeholder="Nova senha" />
-                                    <small>* A senha deve ter mais de 5 caracters</small>
-                                    <label htmlFor="senha">Digite sua senha atual </label>
-                                    <input id="senha" type="password" onChange={handlerChange} value={novoUser.senha} placeholder="Senha atual" disabled={!alterar} />
-
-                                    <small>{err}</small>
-                                    <div className={"loader " + (!loding ? "none" : "flex")} ></div>
-                                    <button type="submit" disabled={!alterar} >Alterar</button>
-                                </form>
-                            </div>
-                        </div>
+                                            </div>
+                                            <h4>{el.titulo}</h4>
+                                            <p>{el.desc} </p>
+                                        </li>
+                                    );
+                                })
+                            }
+                        </ul>
                     </div>
                     :
-                    ''
-            }
-        </>
-    )
+                    props.page === 'perfil' ?
+                        <div className="todo-perfil-medico">
+                            <div className="todo">
+                                <div className="topo">
+                                    <div className="topo-div">
+                                        <img src={user.user.photoURL ? user.user.photoURL : 'https://www.icirnigeria.org/wp-content/uploads/2018/07/noavatar.png'}
+                                            alt="Não foi possivel carregar a imagem"
+                                            title="Perfil" />
+                                    </div>
+                                    <div className="topo-div">
+                                        <h3>{user.user ? user.user.displayName : 'undefined'}</h3>
+                                        <p>{user.user ? user.user.email : ''}</p>
+                                    </div>
+
+                                </div>
+                                <div className="bot">
+                                    <form onSubmit={handlerAlterar}>
+                                        <label htmlFor="nome">Nome</label>
+                                        <input id="nome" type="text" onChange={handlerChange} value={novoUser.nome ? novoUser.nome : ''} placeholder="Nome" />
+
+                                        <label htmlFor="email">Email</label>
+                                        <input id="email" type="email" onChange={handlerChange} value={novoUser.email ? novoUser.email : ''} placeholder="E-mail" />
+
+                                        <label htmlFor="novaSenha">Alterar senha</label>
+                                        <input id="novaSenha" type="password" onChange={handlerChange} value={novoUser.novaSenha} placeholder="Nova senha" />
+                                        <small>* A senha deve ter mais de 5 caracters</small>
+                                        <label htmlFor="senha">Digite sua senha atual </label>
+                                        <input id="senha" type="password" onChange={handlerChange} value={novoUser.senha} placeholder="Senha atual" disabled={!alterar} />
+
+                                        <small>{err}</small>
+                                        <div className={"loader " + (!loding ? "none" : "flex")} ></div>
+                                        <button type="submit" disabled={!alterar} >Alterar</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        :
+                        ''
+                }
+            </>
+        )
+    }
+
 }
 export default HomePaciente;

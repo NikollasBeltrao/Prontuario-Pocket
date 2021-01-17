@@ -50,6 +50,7 @@ const Register: React.FC = (props) => {
                         email: dataPaciente.email,
                         dataN: dataPaciente.dataN,
                         tipoS: dataPaciente.tipoS,
+                        imagem: dataPaciente.foto,
                         tipo: "paciente"
                     }
                     await firestore.collection('Paciente').doc(user?.user?.uid).set(dataUser)

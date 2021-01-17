@@ -84,6 +84,64 @@
     -webkit-animation: spin 2s linear infinite;
     animation: spin 2s linear infinite;
 }
+.inicio {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.lista-exames{
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start !important;
+    justify-content: center;
+    
+}
+.lista-exames li {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start !important;
+    justify-content: center;
+    list-style: none;
+    margin: 5px;
+}
+.icon-exames {
+    font-size: 30px !important;
+}
+.list-container{
+    width: 300px;
+  
+    margin: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    padding: 20px;
+    border-radius: 3px;
+}
+.list-container div{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 20px;
+}
+
+.list-container div input{
+    width: 200px;
+    height: 20px;
+    padding: 5px;
+}
+.list-container div img {
+    width: 80px;
+    border-radius: 100%;
+}
+
+
 
 @-webkit-keyframes spin {
     0% {
