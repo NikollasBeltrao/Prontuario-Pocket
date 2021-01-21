@@ -1,8 +1,8 @@
 {
-  "name": "prontuario",
+  "name": "medplus",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://192.168.100.89/build/",
+  "homepage": "https://backend-analise.000webhostapp.com/",
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
