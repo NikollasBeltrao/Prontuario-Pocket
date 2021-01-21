@@ -3,7 +3,7 @@ import Header from '../Header';
 import auth from '../Service/auth';
 import firestore from '../Service/firestore';
 import { VscFilePdf } from 'react-icons/vsc';
-import './Home.css';
+import './Paciente.css';
 import { useHistory } from 'react-router-dom';
 
 interface Props {
@@ -90,7 +90,6 @@ const HomePaciente: React.FC<Props> = (props) => {
         if (storage) {            
             validar();
             carregarConsultas();
-            console.log(novoM);
         }
     }, [])
 
@@ -202,6 +201,7 @@ const HomePaciente: React.FC<Props> = (props) => {
                 {props.page === undefined ?
                     <div className="inicio">
                         <ul>
+                            {consultas.length <= 0 ? <h1>Não tem consultas</h1> : ''}
                             {
                                 consultas?.map((el, j) => {
                                     return (

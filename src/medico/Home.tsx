@@ -6,8 +6,8 @@ import auth from '../Service/auth';
 import firestore from '../Service/firestore';
 import { VscFilePdf } from 'react-icons/vsc';
 import api from '../Service/apiImg'
-
-import './Home.css';
+import cpfMask from "../cpfMask";
+import './Medico.css';
 
 interface Props {
     user?: any,
@@ -35,7 +35,8 @@ const HomeMedico: React.FC<Props> = (props) => {
         email: "",
         imagem: "",
         nome: "",
-        tipo: ""
+        tipo: "",
+        cpf: ""
 
     });
     const [exame, setExame] = useState({
@@ -142,9 +143,10 @@ const HomeMedico: React.FC<Props> = (props) => {
     }
 
     async function pesquisar(event: React.KeyboardEvent<HTMLInputElement>) {
+        const e = event.target as HTMLInputElement;
+        e.value = cpfMask(e.value)
         if (event.key === "Enter") {
-            const e = event.target as HTMLInputElement;
-            await firestore.collection("Paciente").where("codigo", "==", e.value).get().then((res) => {
+            await firestore.collection("Paciente").where("cpf", "==", e.value).get().then((res) => {
                 if (res?.docs[0]) {
                     setPaciente({
                         uid: res.docs[0].id,
@@ -153,7 +155,8 @@ const HomeMedico: React.FC<Props> = (props) => {
                         email: res.docs[0].data().email,
                         imagem: res.docs[0].data().imagem,
                         nome: res.docs[0].data().nome,
-                        tipo: res.docs[0].data().tipo
+                        tipo: res.docs[0].data().tipo,
+                        cpf: res.docs[0].data().cpf
                     });
                     setpesquisar(true);
                 }
@@ -165,7 +168,8 @@ const HomeMedico: React.FC<Props> = (props) => {
                         email: "",
                         imagem: "",
                         nome: "",
-                        tipo: ""
+                        tipo: "",
+                        cpf: ''
                     })
                 }
             })
@@ -184,7 +188,6 @@ const HomeMedico: React.FC<Props> = (props) => {
         let e = event.target as HTMLInputElement;
         let title = e.childNodes[3] as HTMLInputElement;
         let message = e.childNodes[5] as HTMLInputElement;
-        console.log(title.value, message.value);
         let now = new Date();
         let data = now.getDate() + "/" + (now.getMonth() + 1) + "/" + now.getFullYear();
         setExame({
@@ -203,10 +206,16 @@ const HomeMedico: React.FC<Props> = (props) => {
                 console.log(res);
             }).catch(console.error);
         })
-        console.log(nAqrquivo);
         if (paciente.uid !== '') {
             await firestore.collection("Paciente").doc(paciente.uid).collection("consultas").add({ ...exame, arquivos: nAqrquivo }).then(res => {
-                console.log(res);
+                setExame({
+                    arquivos: Array<File>(),
+                    data: '',
+                    desc: '',
+                    medico: user.user.uid,
+                    titulo: ''
+                })
+                alert("Exame enviado");
             })
         }
 
@@ -219,7 +228,7 @@ const HomeMedico: React.FC<Props> = (props) => {
                 {props.page === undefined ?
                     <div className="inicio">
                         <div className="list-container">
-                            <div><input type="text" placeholder="Pesquisar" onKeyPress={pesquisar} /></div>
+                            <div><input type="text" maxLength={14} placeholder="Pesquisar" onKeyPress={pesquisar} /></div>
                             {pesquisa && paciente.nome !== '' && paciente.email !== '' ?
                                 <div className="paciente">
                                     <img src={paciente.imagem ? paciente.imagem : "https://www.icirnigeria.org/wp-content/uploads/2018/07/noavatar.png"} alt="" />

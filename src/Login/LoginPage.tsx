@@ -90,7 +90,10 @@ const Login: React.FC<LoginProps> = (props) => {
         <div className="container">
             <div className="login-container">
                 {form ? <button className="voltar" onClick={() => setForm(false)}><BsArrowLeftShort /></button> : ''}
-                <h2>Bem vindo(a) ao Med<BsPlus /></h2>
+                <div className="topo-inicio">
+                    <h2>Bem vindo(a) ao Prontuário Pocket</h2>
+                    {!form ? <img className="logo-inicio" src="https://backend-analise.000webhostapp.com/favicon.ico" alt="" /> : ''}
+                </div>
                 <h3>Login</h3>
                 {!form ? <div className="buttons-container">
 

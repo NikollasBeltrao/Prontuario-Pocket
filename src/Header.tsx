@@ -1,7 +1,6 @@
 import React from 'react';
 import './App.css';
 import { useHistory } from 'react-router-dom';
-
 interface User {
     displayName: string,
     email: string
@@ -34,7 +33,7 @@ const Header: React.FC<HeaderProps> = (props) => {
     }
     return (
         <header className="header">
-            <h1>Med+</h1>
+            <h1><img className="logo" src="https://backend-analise.000webhostapp.com/favicon.ico" alt=""/></h1>
             <ul className="header-btns">
                 <li onClick={handlerHome}>Início</li>
                 <li onClick={handlerPerfil}>Perfil</li>

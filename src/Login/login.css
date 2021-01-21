@@ -112,3 +112,15 @@
 .form small {
     color: red;
 }
+.topo-inicio {
+    width: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+}
+.logo-inicio { 
+    margin-top: 25px;   
+    height: 90px;
+    width: 90px;
+}

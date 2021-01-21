@@ -5,6 +5,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { BsArrowLeftShort, BsPlus } from 'react-icons/bs';
 import auth from '../Service/auth';
 import firestore from '../Service/firestore';
+import cpfMask from "../cpfMask";
 
 const Register: React.FC = (props) => {
     const history = useHistory();
@@ -21,6 +22,7 @@ const Register: React.FC = (props) => {
     });
     const [confSenhaM, setConfSenhaM] = useState('');
     const [dataPaciente, setDataPaciente] = useState({
+        cpf: '',
         nome: '',
         email: '',
         senha: '',
@@ -46,6 +48,7 @@ const Register: React.FC = (props) => {
             await auth.createUserWithEmailAndPassword(dataPaciente.email, dataPaciente.senha)
                 .then(async (user) => {
                     let dataUser = {
+                        cpf: dataPaciente.cpf,
                         nome: dataPaciente.nome,
                         email: dataPaciente.email,
                         dataN: dataPaciente.dataN,
@@ -55,7 +58,6 @@ const Register: React.FC = (props) => {
                     }
                     await firestore.collection('Paciente').doc(user?.user?.uid).set(dataUser)
                         .then((res) => {
-                            console.log(res);
                         })
                         .catch((res) => {
                             setErr('Falha ao cadastrar os dados');
@@ -79,6 +81,10 @@ const Register: React.FC = (props) => {
                         .catch((error) => {
                             setErr('Falha ao fazer login');
                         });
+                }, (err) => {
+                    if (err.code == "auth/email-already-in-use") {
+                        setErr('Esse email já está cadastrado');
+                    }
                 })
                 .catch((error) => {
                     setErr('Falha ao cadastrar os dados');
@@ -122,6 +128,9 @@ const Register: React.FC = (props) => {
         //    nome: event.target.value,
         //});
     }
+    function handleCpfP(event: ChangeEvent<HTMLInputElement>) {
+        setDataPaciente({ ...dataPaciente, cpf: cpfMask(event.target.value) })
+    }
 
 
     async function handlerCadastrarMedico(event: FormEvent<HTMLFormElement>) {
@@ -162,6 +171,10 @@ const Register: React.FC = (props) => {
                         .catch((error) => {
                             setErr('Falha as fazer login');
                         });
+                }, (err) => {
+                    if (err.code == "auth/email-already-in-use") {
+                        setErr('Esse email já está cadastrado');
+                    }
                 })
                 .catch((error) => {
                     setErr('Falha ao cadastrar os dados');
@@ -204,22 +217,22 @@ const Register: React.FC = (props) => {
     function handlerSenhaM(event: ChangeEvent<HTMLInputElement>) {
         setDataMedico({ ...dataMedico, senha: event.target.value });
     }
+
+
     return (
         <div className="container">
             <div className="register-container">
                 {form ? <button className="voltar" onClick={() => setForm(false)}><BsArrowLeftShort /></button> : ''}
-                <h2>Bem vindo(a) ao Med<BsPlus /></h2>
+                <br/>
+                <h2>Bem vindo(a) ao Prontuário Pocket</h2>
+                {!form ? <img className="logo-inicio" src="https://backend-analise.000webhostapp.com/favicon.ico" alt="" /> : ''}
                 {!form ? <div className="buttons-container">
                     <button onClick={() => handlerTipo('medico')}>Quero criar uma conta empresarial</button>
                     <p>ou</p>
                     <button onClick={() => handlerTipo('paciente')}>Quero criar uma conta pessoal</button>
                 </div> :
                     <div className="form-container-register">
-                        <div>
-                            <h3>{tipo === 'medico' ? 'Faça sua conta empresarial' : 'Faça sua conta pessoal'}</h3>
-                            <small>{tipo === 'medico' ? 'Torne o atendimento aos seus clientes mais rápido e fácil' :
-                                'Tenha fácil acesso aos seus dados médicos'}</small>
-                        </div>
+
                         {tipo === 'paciente' ?
                             <form onSubmit={handlerCadastrarPaciente} >
                                 {tab === 0 ?
@@ -232,6 +245,9 @@ const Register: React.FC = (props) => {
 
                                         <label htmlFor="datan">* Data de nascimento</label>
                                         <input id="datan" type="date" onChange={handlerDataP} value={dataPaciente.dataN} />
+
+                                        <label htmlFor="cpf">* CPF</label>
+                                        <input id="cpf" type="text" maxLength={14} placeholder="000.000.000-00" onChange={handleCpfP} value={dataPaciente.cpf} />
 
                                         <div><button type="button" className="proximo" onClick={() => setTab(1)}>Proximo</button></div>
                                     </div> :
